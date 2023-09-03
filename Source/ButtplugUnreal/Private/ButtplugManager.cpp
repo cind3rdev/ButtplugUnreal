@@ -2,7 +2,7 @@
 
 #include "ButtplugManager.h"
 #include "IWebSocket.h"
-#include "..\Public\Messages\RequestServerInfoMessage.h"
+#include "Messages/RequestServerInfoMessage.h"
 #include "WebSocketsModule.h"
 #include "Messages/DeviceListMessage.h"
 #include "Messages/DeviceRemovedMessage.h"
