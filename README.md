@@ -14,3 +14,5 @@ The base class for ButtplugUnreal is the `ButtplugManager` Actor Component. You 
 - Maintains a list of connected Devices & Device Added/Removed/Updated Events
 - Buttplug Command Invocation, such as `ScalarCmd`, `LinearCmd`, `VibrateCmd`, etc.
 - High level interaction (for use in Blueprints) for toy control
+
+For more information, see the [Wiki](https://github.com/cind3rdev/ButtplugUnreal/wiki)
