@@ -182,6 +182,11 @@ void UButtplugManager::BindWebSocketEvents()
 		OnError(Error);
 	});
 
+	WebSocket->OnClosed().AddLambda([this]() -> void
+	{
+		OnDisconnected();
+	});
+
 	WebSocket->OnMessage().AddLambda([this](const FString& Message) -> void
 	{
 		HandleIncomingMessage(Message);
