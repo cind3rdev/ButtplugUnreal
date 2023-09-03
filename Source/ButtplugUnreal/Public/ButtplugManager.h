@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ButtplugRotation.h"
 #include "IWebSocket.h"
 #include "ButtplugScalar.h"
 #include "ButtplugSpeed.h"
@@ -51,6 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars) const;
 	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds) const;
 	UFUNCTION(BlueprintCallable) void LinearCmd(int32 DeviceIndex, TArray<FButtplugVector> Vectors) const;
+	UFUNCTION(BlueprintCallable) void RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations) const;
 
 	UFUNCTION(BlueprintCallable) void BasicVibrate(int32 DeviceIndex, float Speed) const;
 

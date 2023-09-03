@@ -9,6 +9,7 @@
 #include "Messages/LinearCmdMessage.h"
 #include "Messages/PingMessage.h"
 #include "Messages/RequestDeviceListMessage.h"
+#include "Messages/RotateCmdMessage.h"
 #include "Messages/ScalarCmdMessage.h"
 #include "Messages/ScanningFinishedMessage.h"
 #include "Messages/ServerInfoMessage.h"
@@ -151,6 +152,17 @@ void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplug
 	LinearCmdMessage->Vectors = Vectors;
 
 	SendMessage(LinearCmdMessage);
+}
+
+void UButtplugManager::RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations) const
+{
+	if (!WebSocket->IsConnected()) return;
+
+	URotateCmdMessage *RotateCmdMessage = NewObject<URotateCmdMessage>();
+	RotateCmdMessage->DeviceIndex = DeviceIndex;
+	RotateCmdMessage->Rotations = Rotations;
+
+	SendMessage(RotateCmdMessage);
 }
 
 void UButtplugManager::BindWebSocketEvents()

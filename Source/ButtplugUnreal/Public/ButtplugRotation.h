@@ -1,0 +1,20 @@
+﻿// Copyright 2023 @Cinder. Licensed MIT.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/Object.h"
+#include "ButtplugRotation.generated.h"
+
+/**
+ * ButtplugRotation represents a Rotation value when sending a LinearCmd message to a device.
+ */
+USTRUCT(Blueprintable)
+struct BUTTPLUGUNREAL_API FButtplugRotation
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite) int32 Index;
+	UPROPERTY(BlueprintReadWrite) float Speed;
+	UPROPERTY(BlueprintReadWrite) bool Clockwise;
+};
