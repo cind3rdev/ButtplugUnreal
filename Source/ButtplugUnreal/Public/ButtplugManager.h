@@ -33,7 +33,7 @@ class BUTTPLUGUNREAL_API UButtplugManager : public UActorComponent
 	
 public:		
 	UPROPERTY(BlueprintReadWrite) FString ClientName = TEXT("ButtplugUnreal");
-	UPROPERTY(BlueprintReadWrite) FString ServerAddress = TEXT("ws://127.0.0.1:5556/");
+	UPROPERTY(BlueprintReadWrite) FString ServerAddress = TEXT("ws://127.0.0.1:12345/");
 	UPROPERTY(BlueprintReadOnly) TArray<FButtplugDevice> Devices = TArray<FButtplugDevice>();
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
