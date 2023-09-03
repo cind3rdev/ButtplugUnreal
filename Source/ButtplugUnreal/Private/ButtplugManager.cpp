@@ -6,6 +6,7 @@
 #include "WebSocketsModule.h"
 #include "Messages/DeviceListMessage.h"
 #include "Messages/DeviceRemovedMessage.h"
+#include "Messages/LinearCmdMessage.h"
 #include "Messages/PingMessage.h"
 #include "Messages/RequestDeviceListMessage.h"
 #include "Messages/ScalarCmdMessage.h"
@@ -139,6 +140,17 @@ void UButtplugManager::VibrateCmd(const int32 DeviceIndex, const TArray<FButtplu
 	VibrateCmdMessage->Speeds = Speeds;
 
 	SendMessage(VibrateCmdMessage);
+}
+
+void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplugVector> Vectors) const
+{
+	if (!WebSocket->IsConnected()) return;
+
+	ULinearCmdMessage *LinearCmdMessage = NewObject<ULinearCmdMessage>();
+	LinearCmdMessage->DeviceIndex = DeviceIndex;
+	LinearCmdMessage->Vectors = Vectors;
+
+	SendMessage(LinearCmdMessage);
 }
 
 void UButtplugManager::BindWebSocketEvents()

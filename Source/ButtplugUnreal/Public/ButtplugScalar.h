@@ -7,7 +7,7 @@
 #include "ButtplugScalar.generated.h"
 
 /**
- * ButtplugSpeed represents a Speed value when sending a ScalarCmd message to a device.
+ * ButtplugScalar represents a Scalar value when sending a ScalarCmd message to a device.
  */
 USTRUCT(Blueprintable)
 struct BUTTPLUGUNREAL_API FButtplugScalar
