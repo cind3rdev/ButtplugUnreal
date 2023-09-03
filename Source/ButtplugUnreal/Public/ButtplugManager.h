@@ -40,6 +40,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable) void Connect();
 	UFUNCTION(BlueprintCallable) void Shutdown();
+	UFUNCTION(BlueprintCallable) bool IsConnected();
 
 	UFUNCTION(BlueprintCallable) void StartScanning();
 	UFUNCTION(BlueprintCallable) void StopScanning();

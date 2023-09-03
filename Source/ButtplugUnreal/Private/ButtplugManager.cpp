@@ -55,6 +55,11 @@ void UButtplugManager::Shutdown()
 	WebSocket->Close();
 }
 
+bool UButtplugManager::IsConnected()
+{
+	return WebSocket->IsConnected();
+}
+
 void UButtplugManager::StartScanning()
 {
 	if (!WebSocket->IsConnected()) return;
