@@ -42,16 +42,10 @@ void UButtplugManager::Connect()
 void UButtplugManager::Shutdown()
 {
 	if (!WebSocket->IsConnected()) return;
-
-	// Stop ping timer
+	
 	GetOwner()->GetWorldTimerManager().ClearTimer(PingTimerHandler);
-	
-	// Send stop all devices command
 	StopAllDevices();
-
-	// Empty devices list (will be re-populated on next connect)
 	Devices.Empty();
-	
 	WebSocket->Close();
 }
 
@@ -179,6 +173,7 @@ void UButtplugManager::BindWebSocketEvents()
 
 	WebSocket->OnConnectionError().AddLambda([this](const FString& Error) -> void
 	{
+		OnWebSocketError(Error);
 		OnError(Error);
 	});
 
@@ -195,11 +190,11 @@ void UButtplugManager::BindWebSocketEvents()
 
 void UButtplugManager::HandleIncomingMessage(const FString& Message)
 {
-	const FString MessageName = UButtplugMessage::GetMessageNameFromString(Message);
+	const auto MessageName = UButtplugMessage::GetMessageNameFromString(Message);
 
 	if (MessageName == "ServerInfo")
 	{
-		UServerInfoMessage *ServerInfoMessage = NewObject<UServerInfoMessage>();
+		const auto ServerInfoMessage = NewObject<UServerInfoMessage>();
 		ServerInfoMessage->DeserializeFromString(Message);
 		
 		OnConnected();
@@ -212,7 +207,7 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 	}
 	else if (MessageName == "DeviceAdded")
 	{
-		UDeviceAddedMessage *DeviceAddedMessage = NewObject<UDeviceAddedMessage>();
+		const auto DeviceAddedMessage = NewObject<UDeviceAddedMessage>();
 		DeviceAddedMessage->DeserializeFromString(Message);
 
 		Devices.Add(DeviceAddedMessage->Device);
@@ -222,7 +217,7 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 	}
 	else if (MessageName == "DeviceRemoved")
 	{
-		UDeviceRemovedMessage *DeviceRemovedMessage = NewObject<UDeviceRemovedMessage>();
+		const auto DeviceRemovedMessage = NewObject<UDeviceRemovedMessage>();
 		DeviceRemovedMessage->DeserializeFromString(Message);
 
 		for (int i = 0; i < Devices.Num(); i++)
@@ -239,7 +234,7 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 	}
 	else if (MessageName == "DeviceList")
 	{
-		UDeviceListMessage *DeviceListMessage = NewObject<UDeviceListMessage>();
+		const auto DeviceListMessage = NewObject<UDeviceListMessage>();
 		DeviceListMessage->DeserializeFromString(Message);
 
 		for (auto Device : DeviceListMessage->Devices)
@@ -252,10 +247,18 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 	}
 	else if (MessageName == "ScanningFinished")
 	{
-		UScanningFinishedMessage *ScanningFinishedMessage = NewObject<UScanningFinishedMessage>();
+		const auto ScanningFinishedMessage = NewObject<UScanningFinishedMessage>();
 		ScanningFinishedMessage->DeserializeFromString(Message);
 
 		OnScanningFinished();
+	}
+	else if (MessageName == "Error")
+	{
+		const auto ErrorMessage = NewObject<UErrorMessage>();
+		ErrorMessage->DeserializeFromString(Message);
+
+		OnButtplugError(ErrorMessage);
+		OnError(ErrorMessage->ErrorMessage);
 	}
 	else
 	{

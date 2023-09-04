@@ -10,6 +10,7 @@
 #include "ButtplugVector.h"
 #include "Messages/ButtplugMessage.h"
 #include "Messages/DeviceAddedMessage.h"
+#include "Messages/ErrorMessage.h"
 #include "ButtplugManager.generated.h"
 
 /**
@@ -59,9 +60,13 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) void OnConnected();
 	UFUNCTION(BlueprintImplementableEvent) void OnDisconnected(int32 StatusCode, const FString& Reason, bool WasClean);
+	UFUNCTION(BlueprintImplementableEvent) void OnError(const FString& Message);
+	UFUNCTION(BlueprintImplementableEvent) void OnWebSocketError(const FString& Message);
+	
 	UFUNCTION(BlueprintImplementableEvent) void OnDeviceAdded(FButtplugDevice Device);
 	UFUNCTION(BlueprintImplementableEvent) void OnDeviceRemoved(int32 DeviceIndex);
 	UFUNCTION(BlueprintImplementableEvent) void OnDevicesChanged();
 	UFUNCTION(BlueprintImplementableEvent) void OnScanningFinished();
-	UFUNCTION(BlueprintImplementableEvent) void OnError(const FString& Message);
+
+	UFUNCTION(BlueprintImplementableEvent) void OnButtplugError(UErrorMessage* ErrorMessage);
 };
