@@ -58,7 +58,7 @@ public:
 	UFUNCTION(BlueprintCallable) void BasicVibrate(int32 DeviceIndex, float Speed) const;
 
 	UFUNCTION(BlueprintImplementableEvent) void OnConnected();
-	UFUNCTION(BlueprintImplementableEvent) void OnDisconnected();
+	UFUNCTION(BlueprintImplementableEvent) void OnDisconnected(int32 StatusCode, const FString& Reason, bool WasClean);
 	UFUNCTION(BlueprintImplementableEvent) void OnDeviceAdded(FButtplugDevice Device);
 	UFUNCTION(BlueprintImplementableEvent) void OnDeviceRemoved(int32 DeviceIndex);
 	UFUNCTION(BlueprintImplementableEvent) void OnDevicesChanged();
