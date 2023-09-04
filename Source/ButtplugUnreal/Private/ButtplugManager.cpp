@@ -12,6 +12,7 @@
 #include "Messages/RotateCmdMessage.h"
 #include "Messages/ScalarCmdMessage.h"
 #include "Messages/ScanningFinishedMessage.h"
+#include "Messages/SensorReadCmdMessage.h"
 #include "Messages/SensorReadingMessage.h"
 #include "Messages/ServerInfoMessage.h"
 #include "Messages/StartScanningMessage.h"
@@ -59,7 +60,7 @@ void UButtplugManager::StartScanning()
 {
 	if (!WebSocket->IsConnected()) return;
 
-	UStartScanningMessage *StartScanningMessage = NewObject<UStartScanningMessage>();
+	const auto StartScanningMessage = NewObject<UStartScanningMessage>();
 
 	SendMessage(StartScanningMessage);
 }
@@ -68,7 +69,7 @@ void UButtplugManager::StopScanning()
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	UStopScanningMessage *StopScanningMessage = NewObject<UStopScanningMessage>();
+	const auto StopScanningMessage = NewObject<UStopScanningMessage>();
 
 	SendMessage(StopScanningMessage);
 }
@@ -77,7 +78,7 @@ void UButtplugManager::RequestServerInfo()
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	URequestServerInfoMessage *RequestServerInfoMessage = NewObject<URequestServerInfoMessage>();
+	const auto RequestServerInfoMessage = NewObject<URequestServerInfoMessage>();
 
 	SendMessage(RequestServerInfoMessage);
 }
@@ -86,7 +87,7 @@ void UButtplugManager::RequestDeviceList()
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	URequestDeviceListMessage *RequestDeviceListMessage = NewObject<URequestDeviceListMessage>();
+	const auto RequestDeviceListMessage = NewObject<URequestDeviceListMessage>();
 
 	SendMessage(RequestDeviceListMessage);
 }
@@ -106,7 +107,7 @@ void UButtplugManager::StopAllDevices()
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	UStopAllDevicesMessage *StopAllDevicesMessage = NewObject<UStopAllDevicesMessage>();
+	const auto StopAllDevicesMessage = NewObject<UStopAllDevicesMessage>();
 
 	SendMessage(StopAllDevicesMessage);
 }
@@ -115,17 +116,29 @@ void UButtplugManager::StopDeviceCmd(const int32 DeviceIndex) const
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	UStopDeviceCmdMessage *StopDeviceCmdMessage = NewObject<UStopDeviceCmdMessage>();
+	const auto StopDeviceCmdMessage = NewObject<UStopDeviceCmdMessage>();
 	StopDeviceCmdMessage->DeviceIndex = DeviceIndex;
 
 	SendMessage(StopDeviceCmdMessage);
+}
+
+void UButtplugManager::SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const
+{
+	if (!WebSocket->IsConnected()) return;
+
+	const auto SensorReadCmdMessage = NewObject<USensorReadCmdMessage>();
+	SensorReadCmdMessage->DeviceIndex = DeviceIndex;
+	SensorReadCmdMessage->SensorIndex = SensorIndex;
+	SensorReadCmdMessage->SensorType = SensorType;
+
+	SendMessage(SensorReadCmdMessage);
 }
 
 void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplugScalar> Scalars) const
 {
 	if (!WebSocket->IsConnected()) return;
 	
-	UScalarCmdMessage *ScalarCmdMessage = NewObject<UScalarCmdMessage>();
+	const auto ScalarCmdMessage = NewObject<UScalarCmdMessage>();
 	ScalarCmdMessage->DeviceIndex = DeviceIndex;
 	ScalarCmdMessage->Scalars = Scalars;
 
@@ -136,7 +149,7 @@ void UButtplugManager::VibrateCmd(const int32 DeviceIndex, const TArray<FButtplu
 {
 	if (!WebSocket->IsConnected()) return;
 
-	UVibrateCmdMessage *VibrateCmdMessage = NewObject<UVibrateCmdMessage>();
+	const auto VibrateCmdMessage = NewObject<UVibrateCmdMessage>();
 	VibrateCmdMessage->DeviceIndex = DeviceIndex;
 	VibrateCmdMessage->Speeds = Speeds;
 
@@ -147,7 +160,7 @@ void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplug
 {
 	if (!WebSocket->IsConnected()) return;
 
-	ULinearCmdMessage *LinearCmdMessage = NewObject<ULinearCmdMessage>();
+	const auto LinearCmdMessage = NewObject<ULinearCmdMessage>();
 	LinearCmdMessage->DeviceIndex = DeviceIndex;
 	LinearCmdMessage->Vectors = Vectors;
 
@@ -158,7 +171,7 @@ void UButtplugManager::RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Ro
 {
 	if (!WebSocket->IsConnected()) return;
 
-	URotateCmdMessage *RotateCmdMessage = NewObject<URotateCmdMessage>();
+	const auto RotateCmdMessage = NewObject<URotateCmdMessage>();
 	RotateCmdMessage->DeviceIndex = DeviceIndex;
 	RotateCmdMessage->Rotations = Rotations;
 

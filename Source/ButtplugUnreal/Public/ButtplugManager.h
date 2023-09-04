@@ -51,6 +51,8 @@ public:
 	UFUNCTION(BlueprintCallable) void RequestDeviceList();
 	UFUNCTION(BlueprintCallable) void StopAllDevices();
 	UFUNCTION(BlueprintCallable) void StopDeviceCmd(int32 DeviceIndex) const;
+
+	UFUNCTION(BlueprintCallable) void SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
 	
 	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars) const;
 	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds) const;
