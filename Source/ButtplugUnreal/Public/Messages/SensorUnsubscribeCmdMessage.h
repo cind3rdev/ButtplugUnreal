@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "ButtplugMessage.h"
-#include "SensorSubscribeCmdMessage.generated.h"
+#include "SensorUnsubscribeCmdMessage.generated.h"
 
 /**
- * SensorSubscribeCmd Message
- * https://buttplug-spec.docs.buttplug.io/docs/spec/sensors/#sensorsubscribecmd
+ * SensorUnsubscribeCmd Message
+ * https://buttplug-spec.docs.buttplug.io/docs/spec/sensors/#sensorunsubscribecmd
  */
 UCLASS()
-class BUTTPLUGUNREAL_API USensorSubscribeCmdMessage : public UButtplugMessage
+class BUTTPLUGUNREAL_API USensorUnsubscribeCmdMessage : public UButtplugMessage
 {
 	GENERATED_BODY()
 

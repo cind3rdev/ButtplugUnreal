@@ -15,6 +15,7 @@
 #include "Messages/SensorReadCmdMessage.h"
 #include "Messages/SensorReadingMessage.h"
 #include "Messages/SensorSubscribeCmdMessage.h"
+#include "Messages/SensorUnsubscribeCmdMessage.h"
 #include "Messages/ServerInfoMessage.h"
 #include "Messages/StartScanningMessage.h"
 #include "Messages/StopAllDevicesMessage.h"
@@ -145,6 +146,18 @@ void UButtplugManager::SensorSubscribeCmd(const int32 DeviceIndex, const int32 S
 	SensorSubscribeCmdMessage->SensorType = SensorType;
 
 	SendMessage(SensorSubscribeCmdMessage);
+}
+
+void UButtplugManager::SensorUnsubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
+{
+	if (!WebSocket->IsConnected()) return;
+
+	const auto SensorUnsubscribeCmdMessage = NewObject<USensorUnsubscribeCmdMessage>();
+	SensorUnsubscribeCmdMessage->DeviceIndex = DeviceIndex;
+	SensorUnsubscribeCmdMessage->SensorIndex = SensorIndex;
+	SensorUnsubscribeCmdMessage->SensorType = SensorType;
+
+	SendMessage(SensorUnsubscribeCmdMessage);
 }
 
 void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplugScalar> Scalars) const

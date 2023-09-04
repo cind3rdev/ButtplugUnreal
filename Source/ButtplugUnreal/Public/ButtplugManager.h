@@ -54,6 +54,7 @@ public:
 
 	UFUNCTION(BlueprintCallable) void SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
 	UFUNCTION(BlueprintCallable) void SensorSubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
+	UFUNCTION(BlueprintCallable) void SensorUnsubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
 	
 	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars) const;
 	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds) const;
