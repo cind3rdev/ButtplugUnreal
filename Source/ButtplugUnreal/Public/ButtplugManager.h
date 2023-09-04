@@ -11,6 +11,7 @@
 #include "Messages/ButtplugMessage.h"
 #include "Messages/DeviceAddedMessage.h"
 #include "Messages/ErrorMessage.h"
+#include "Messages/SensorReadingMessage.h"
 #include "ButtplugManager.generated.h"
 
 /**
@@ -67,6 +68,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void OnDeviceRemoved(int32 DeviceIndex);
 	UFUNCTION(BlueprintImplementableEvent) void OnDevicesChanged();
 	UFUNCTION(BlueprintImplementableEvent) void OnScanningFinished();
+
+	UFUNCTION(BlueprintImplementableEvent) void OnSensorReading(USensorReadingMessage* SensorReadingMessage);
 
 	UFUNCTION(BlueprintImplementableEvent) void OnButtplugError(UErrorMessage* ErrorMessage);
 };

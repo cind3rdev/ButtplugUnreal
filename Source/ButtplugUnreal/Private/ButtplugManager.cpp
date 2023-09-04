@@ -12,6 +12,7 @@
 #include "Messages/RotateCmdMessage.h"
 #include "Messages/ScalarCmdMessage.h"
 #include "Messages/ScanningFinishedMessage.h"
+#include "Messages/SensorReadingMessage.h"
 #include "Messages/ServerInfoMessage.h"
 #include "Messages/StartScanningMessage.h"
 #include "Messages/StopAllDevicesMessage.h"
@@ -251,6 +252,13 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 		ScanningFinishedMessage->DeserializeFromString(Message);
 
 		OnScanningFinished();
+	}
+	else if (MessageName == "SenorReading")
+	{
+		const auto SensorReadingMessage = NewObject<USensorReadingMessage>();
+		SensorReadingMessage->DeserializeFromString(Message);
+
+		OnSensorReading(SensorReadingMessage);
 	}
 	else if (MessageName == "Error")
 	{
