@@ -14,6 +14,7 @@
 #include "Messages/ScanningFinishedMessage.h"
 #include "Messages/SensorReadCmdMessage.h"
 #include "Messages/SensorReadingMessage.h"
+#include "Messages/SensorSubscribeCmdMessage.h"
 #include "Messages/ServerInfoMessage.h"
 #include "Messages/StartScanningMessage.h"
 #include "Messages/StopAllDevicesMessage.h"
@@ -122,7 +123,7 @@ void UButtplugManager::StopDeviceCmd(const int32 DeviceIndex) const
 	SendMessage(StopDeviceCmdMessage);
 }
 
-void UButtplugManager::SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const
+void UButtplugManager::SensorReadCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
 {
 	if (!WebSocket->IsConnected()) return;
 
@@ -132,6 +133,18 @@ void UButtplugManager::SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FStri
 	SensorReadCmdMessage->SensorType = SensorType;
 
 	SendMessage(SensorReadCmdMessage);
+}
+
+void UButtplugManager::SensorSubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
+{
+	if (!WebSocket->IsConnected()) return;
+
+	const auto SensorSubscribeCmdMessage = NewObject<USensorSubscribeCmdMessage>();
+	SensorSubscribeCmdMessage->DeviceIndex = DeviceIndex;
+	SensorSubscribeCmdMessage->SensorIndex = SensorIndex;
+	SensorSubscribeCmdMessage->SensorType = SensorType;
+
+	SendMessage(SensorSubscribeCmdMessage);
 }
 
 void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplugScalar> Scalars) const
@@ -167,7 +180,7 @@ void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplug
 	SendMessage(LinearCmdMessage);
 }
 
-void UButtplugManager::RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations) const
+void UButtplugManager::RotateCmd(const int32 DeviceIndex, const TArray<FButtplugRotation> Rotations) const
 {
 	if (!WebSocket->IsConnected()) return;
 
