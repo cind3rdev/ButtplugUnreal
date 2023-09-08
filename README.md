@@ -16,3 +16,5 @@ The base class for ButtplugUnreal is the `ButtplugManager` Actor Component. You 
 - High level interaction (for use in Blueprints) for toy control
 
 For more information, see the [Wiki](https://github.com/cind3rdev/ButtplugUnreal/wiki)
+
+You can view an example Blueprint subclass of `ButtplugManager` [here](https://blueprintue.com/blueprint/rf25ba5i/)
