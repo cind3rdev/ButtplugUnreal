@@ -27,11 +27,13 @@ class BUTTPLUGUNREAL_API UButtplugManager : public UActorComponent
 	TSharedPtr<IWebSocket> WebSocket;
 	FTimerHandle PingTimerHandler;
 	
-	void OnWebSocketClosed(int32 StatusCode, const FString& Reason, bool WasClean);
 	void Ping();
-	void OnWebSocketConnected();
-	void OnWebSocketConnectionError(const FString& Error);
-	void OnWebSocketMessage(const FString& Message);
+
+	UFUNCTION() void OnWebSocketConnected();
+	UFUNCTION() void OnWebSocketConnectionError(const FString& Error);
+	UFUNCTION() void OnWebSocketMessage(const FString& Message);
+	UFUNCTION() void OnWebSocketClosed(int32 StatusCode, const FString& Reason, bool WasClean);
+	
 	static void EnsureModuleLoaded(const FString& ModuleName);
 	
 public:		
