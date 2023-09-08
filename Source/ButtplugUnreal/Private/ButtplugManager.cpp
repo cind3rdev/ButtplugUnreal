@@ -38,19 +38,24 @@ void UButtplugManager::Connect()
 
 	this->WebSocket = FWebSocketsModule::Get().CreateWebSocket(ServerAddress);
 
-	BindWebSocketEvents();
+	WebSocket->OnConnected().AddUFunction(this, "OnWebSocketConnected");
+	WebSocket->OnMessage().AddUFunction(this, "OnWebSocketMessage");
+	WebSocket->OnConnectionError().AddUFunction(this, "OnWebSocketConnectionError");
+	WebSocket->OnClosed().AddUFunction(this, "OnWebSocketClosed");
 
 	WebSocket->Connect();
 }
 
 void UButtplugManager::Shutdown()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
-	
 	GetOwner()->GetWorldTimerManager().ClearTimer(PingTimerHandler);
-	StopAllDevices();
 	Devices.Empty();
-	WebSocket->Close();
+	
+	if (WebSocket && WebSocket->IsConnected())
+	{
+		StopAllDevices();
+		WebSocket->Close();
+	}
 }
 
 bool UButtplugManager::IsConnected()
@@ -60,7 +65,7 @@ bool UButtplugManager::IsConnected()
 
 void UButtplugManager::StartScanning()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto StartScanningMessage = NewObject<UStartScanningMessage>();
 
@@ -69,7 +74,7 @@ void UButtplugManager::StartScanning()
 
 void UButtplugManager::StopScanning()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto StopScanningMessage = NewObject<UStopScanningMessage>();
 
@@ -78,7 +83,7 @@ void UButtplugManager::StopScanning()
 
 void UButtplugManager::RequestServerInfo()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto RequestServerInfoMessage = NewObject<URequestServerInfoMessage>();
 
@@ -87,16 +92,16 @@ void UButtplugManager::RequestServerInfo()
 
 void UButtplugManager::RequestDeviceList()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto RequestDeviceListMessage = NewObject<URequestDeviceListMessage>();
 
 	SendMessage(RequestDeviceListMessage);
 }
 
-void UButtplugManager::BasicVibrate(const int32 DeviceIndex, const float Speed) const
+void UButtplugManager::BasicVibrate(const int32 DeviceIndex, const float Speed)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	FButtplugSpeed S;
 	S.Index = 0;
@@ -107,16 +112,16 @@ void UButtplugManager::BasicVibrate(const int32 DeviceIndex, const float Speed) 
 
 void UButtplugManager::StopAllDevices()
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto StopAllDevicesMessage = NewObject<UStopAllDevicesMessage>();
 
 	SendMessage(StopAllDevicesMessage);
 }
 
-void UButtplugManager::StopDeviceCmd(const int32 DeviceIndex) const
+void UButtplugManager::StopDeviceCmd(const int32 DeviceIndex)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto StopDeviceCmdMessage = NewObject<UStopDeviceCmdMessage>();
 	StopDeviceCmdMessage->DeviceIndex = DeviceIndex;
@@ -124,9 +129,9 @@ void UButtplugManager::StopDeviceCmd(const int32 DeviceIndex) const
 	SendMessage(StopDeviceCmdMessage);
 }
 
-void UButtplugManager::SensorReadCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
+void UButtplugManager::SensorReadCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto SensorReadCmdMessage = NewObject<USensorReadCmdMessage>();
 	SensorReadCmdMessage->DeviceIndex = DeviceIndex;
@@ -136,9 +141,9 @@ void UButtplugManager::SensorReadCmd(const int32 DeviceIndex, const int32 Sensor
 	SendMessage(SensorReadCmdMessage);
 }
 
-void UButtplugManager::SensorSubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
+void UButtplugManager::SensorSubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto SensorSubscribeCmdMessage = NewObject<USensorSubscribeCmdMessage>();
 	SensorSubscribeCmdMessage->DeviceIndex = DeviceIndex;
@@ -148,9 +153,9 @@ void UButtplugManager::SensorSubscribeCmd(const int32 DeviceIndex, const int32 S
 	SendMessage(SensorSubscribeCmdMessage);
 }
 
-void UButtplugManager::SensorUnsubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType) const
+void UButtplugManager::SensorUnsubscribeCmd(const int32 DeviceIndex, const int32 SensorIndex, FString SensorType)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto SensorUnsubscribeCmdMessage = NewObject<USensorUnsubscribeCmdMessage>();
 	SensorUnsubscribeCmdMessage->DeviceIndex = DeviceIndex;
@@ -160,9 +165,9 @@ void UButtplugManager::SensorUnsubscribeCmd(const int32 DeviceIndex, const int32
 	SendMessage(SensorUnsubscribeCmdMessage);
 }
 
-void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplugScalar> Scalars) const
+void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplugScalar> Scalars)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 	
 	const auto ScalarCmdMessage = NewObject<UScalarCmdMessage>();
 	ScalarCmdMessage->DeviceIndex = DeviceIndex;
@@ -171,9 +176,9 @@ void UButtplugManager::ScalarCmd(const int32 DeviceIndex, const TArray<FButtplug
 	SendMessage(ScalarCmdMessage);
 }
 
-void UButtplugManager::VibrateCmd(const int32 DeviceIndex, const TArray<FButtplugSpeed> Speeds) const
+void UButtplugManager::VibrateCmd(const int32 DeviceIndex, const TArray<FButtplugSpeed> Speeds)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto VibrateCmdMessage = NewObject<UVibrateCmdMessage>();
 	VibrateCmdMessage->DeviceIndex = DeviceIndex;
@@ -182,9 +187,9 @@ void UButtplugManager::VibrateCmd(const int32 DeviceIndex, const TArray<FButtplu
 	SendMessage(VibrateCmdMessage);
 }
 
-void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplugVector> Vectors) const
+void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplugVector> Vectors)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto LinearCmdMessage = NewObject<ULinearCmdMessage>();
 	LinearCmdMessage->DeviceIndex = DeviceIndex;
@@ -193,9 +198,9 @@ void UButtplugManager::LinearCmd(const int32 DeviceIndex, const TArray<FButtplug
 	SendMessage(LinearCmdMessage);
 }
 
-void UButtplugManager::RotateCmd(const int32 DeviceIndex, const TArray<FButtplugRotation> Rotations) const
+void UButtplugManager::RotateCmd(const int32 DeviceIndex, const TArray<FButtplugRotation> Rotations)
 {
-	if (!WebSocket || !WebSocket->IsConnected()) return;
+	if (!IsConnected()) return;
 
 	const auto RotateCmdMessage = NewObject<URotateCmdMessage>();
 	RotateCmdMessage->DeviceIndex = DeviceIndex;
@@ -204,34 +209,30 @@ void UButtplugManager::RotateCmd(const int32 DeviceIndex, const TArray<FButtplug
 	SendMessage(RotateCmdMessage);
 }
 
-void UButtplugManager::BindWebSocketEvents()
+void UButtplugManager::OnWebSocketClosed(const int32 StatusCode, const FString& Reason, const bool WasClean)
 {
-	WebSocket->OnConnected().AddLambda([this]() -> void
-	{
-		RequestServerInfo();
-	});
-
-	WebSocket->OnConnectionError().AddLambda([this](const FString& Error) -> void
-	{
-		OnWebSocketError(Error);
-		OnError(Error);
-	});
-
-	WebSocket->OnClosed().AddLambda([this](const int32 StatusCode, const FString& Reason, const bool WasClean) -> void
-	{
-		OnDisconnected(StatusCode, Reason, WasClean);
-	});
-
-	WebSocket->OnMessage().AddLambda([this](const FString& Message) -> void
-	{
-		HandleIncomingMessage(Message);
-	});
+	OnDisconnected(StatusCode, Reason, WasClean);
 }
 
-void UButtplugManager::HandleIncomingMessage(const FString& Message)
+void UButtplugManager::OnWebSocketConnected()
 {
-	const auto MessageName = UButtplugMessage::GetMessageNameFromString(Message);
+	if (!IsConnected()) return;
+	
+	RequestServerInfo();
+}
 
+void UButtplugManager::OnWebSocketConnectionError(const FString& Error)
+{
+	OnWebSocketError(Error);
+	OnError(Error);
+}
+
+void UButtplugManager::OnWebSocketMessage(const FString& Message)
+{
+	if (!IsConnected()) return;
+	
+	const auto MessageName = UButtplugMessage::GetMessageNameFromString(Message);
+	
 	if (MessageName == "ServerInfo")
 	{
 		const auto ServerInfoMessage = NewObject<UServerInfoMessage>();
@@ -313,14 +314,16 @@ void UButtplugManager::HandleIncomingMessage(const FString& Message)
 	}
 }
 
-void UButtplugManager::SendMessage(UButtplugMessage* Message) const
+void UButtplugManager::SendMessage(UButtplugMessage* Message)
 {
+	if (!IsConnected()) return;
+	
 	const FString SerializedMessage = Message->SerializeToStringWrapped();
 	UE_LOG(LogTemp, Display, TEXT("[ButtplugUnreal] Sending Message: %s"), *SerializedMessage);
 	WebSocket->Send(SerializedMessage);
 }
 
-void UButtplugManager::Ping() const
+void UButtplugManager::Ping()
 {
 	UPingMessage *PingMessage = NewObject<UPingMessage>();
 	SendMessage(PingMessage);

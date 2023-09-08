@@ -27,10 +27,11 @@ class BUTTPLUGUNREAL_API UButtplugManager : public UActorComponent
 	TSharedPtr<IWebSocket> WebSocket;
 	FTimerHandle PingTimerHandler;
 	
-	void BindWebSocketEvents();
-	void SendMessage(UButtplugMessage* Message) const;
-	void Ping() const;
-	void HandleIncomingMessage(const FString& Message);
+	void OnWebSocketClosed(int32 StatusCode, const FString& Reason, bool WasClean);
+	void Ping();
+	void OnWebSocketConnected();
+	void OnWebSocketConnectionError(const FString& Error);
+	void OnWebSocketMessage(const FString& Message);
 	static void EnsureModuleLoaded(const FString& ModuleName);
 	
 public:		
@@ -44,24 +45,26 @@ public:
 	UFUNCTION(BlueprintCallable) void Shutdown();
 	UFUNCTION(BlueprintCallable) bool IsConnected();
 
+	UFUNCTION(BlueprintCallable) void SendMessage(UButtplugMessage* Message);
+
 	UFUNCTION(BlueprintCallable) void StartScanning();
 	UFUNCTION(BlueprintCallable) void StopScanning();
 	UFUNCTION(BlueprintCallable) void RequestServerInfo();
 
 	UFUNCTION(BlueprintCallable) void RequestDeviceList();
 	UFUNCTION(BlueprintCallable) void StopAllDevices();
-	UFUNCTION(BlueprintCallable) void StopDeviceCmd(int32 DeviceIndex) const;
+	UFUNCTION(BlueprintCallable) void StopDeviceCmd(int32 DeviceIndex);
 
-	UFUNCTION(BlueprintCallable) void SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
-	UFUNCTION(BlueprintCallable) void SensorSubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
-	UFUNCTION(BlueprintCallable) void SensorUnsubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType) const;
+	UFUNCTION(BlueprintCallable) void SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
+	UFUNCTION(BlueprintCallable) void SensorSubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
+	UFUNCTION(BlueprintCallable) void SensorUnsubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
 	
-	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars) const;
-	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds) const;
-	UFUNCTION(BlueprintCallable) void LinearCmd(int32 DeviceIndex, TArray<FButtplugVector> Vectors) const;
-	UFUNCTION(BlueprintCallable) void RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations) const;
+	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars);
+	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds);
+	UFUNCTION(BlueprintCallable) void LinearCmd(int32 DeviceIndex, TArray<FButtplugVector> Vectors);
+	UFUNCTION(BlueprintCallable) void RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations);
 
-	UFUNCTION(BlueprintCallable) void BasicVibrate(int32 DeviceIndex, float Speed) const;
+	UFUNCTION(BlueprintCallable) void BasicVibrate(int32 DeviceIndex, float Speed);
 
 	UFUNCTION(BlueprintImplementableEvent) void OnConnected();
 	UFUNCTION(BlueprintImplementableEvent) void OnDisconnected(int32 StatusCode, const FString& Reason, bool WasClean);
