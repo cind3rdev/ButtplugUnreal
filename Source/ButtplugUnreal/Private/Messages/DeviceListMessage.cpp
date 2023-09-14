@@ -1,4 +1,4 @@
-﻿// Copyright 2023 @Cinder. Licensed MIT.
+﻿// Copyright 2023 @cind3rdev. See LICENSE.md for more info.
 
 
 #include "Messages/DeviceListMessage.h"
