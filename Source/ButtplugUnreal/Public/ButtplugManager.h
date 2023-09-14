@@ -1,84 +1,30 @@
-// Copyright 2023 @Cinder. Licensed MIT.
+﻿// Copyright 2023 @Cinder. Licensed MIT.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ButtplugRotation.h"
-#include "IWebSocket.h"
-#include "ButtplugScalar.h"
-#include "ButtplugSpeed.h"
-#include "ButtplugVector.h"
-#include "Messages/ButtplugMessage.h"
-#include "Messages/DeviceAddedMessage.h"
-#include "Messages/ErrorMessage.h"
-#include "Messages/SensorReadingMessage.h"
+#include "ButtplugManagerBase.h"
 #include "ButtplugManager.generated.h"
 
 /**
- * ButtplugManager is the main class for interacting with Buttplug. It handles
- * connecting to the server, sending and receiving messages, and maintaining a
- * connected devices list.
+ * ButtplugManager extends ButtplugManagerBase with additional, higher level functionality
+ * that is useful for most applications.
  */
 UCLASS(Blueprintable)
-class BUTTPLUGUNREAL_API UButtplugManager : public UActorComponent
+class BUTTPLUGUNREAL_API UButtplugManager : public UButtplugManagerBase
 {
 	GENERATED_BODY()
 
-	TSharedPtr<IWebSocket> WebSocket;
-	FTimerHandle PingTimerHandler;
+private:
+	void HandleConnected();
 	
-	void Ping();
-
-	UFUNCTION() void OnWebSocketConnected();
-	UFUNCTION() void OnWebSocketConnectionError(const FString& Error);
-	UFUNCTION() void OnWebSocketMessage(const FString& Message);
-	UFUNCTION() void OnWebSocketClosed(int32 StatusCode, const FString& Reason, bool WasClean);
+protected:
+	UFUNCTION()
+	virtual void BeginPlay() override;
 	
-	static void EnsureModuleLoaded(const FString& ModuleName);
+public:	
+	UPROPERTY(BlueprintReadWrite) bool ScanForDevicesOnConnected = true;
 	
-public:		
-	UPROPERTY(BlueprintReadWrite) FString ClientName = TEXT("ButtplugUnreal");
-	UPROPERTY(BlueprintReadWrite) FString ServerAddress = TEXT("ws://127.0.0.1:12345/");
-	UPROPERTY(BlueprintReadOnly) TArray<FButtplugDevice> Devices = TArray<FButtplugDevice>();
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
-	UFUNCTION(BlueprintCallable) void Connect();
-	UFUNCTION(BlueprintCallable) void Shutdown();
-	UFUNCTION(BlueprintCallable) bool IsConnected();
-
-	UFUNCTION(BlueprintCallable) void SendMessage(UButtplugMessage* Message);
-
-	UFUNCTION(BlueprintCallable) void StartScanning();
-	UFUNCTION(BlueprintCallable) void StopScanning();
-	UFUNCTION(BlueprintCallable) void RequestServerInfo();
-
-	UFUNCTION(BlueprintCallable) void RequestDeviceList();
-	UFUNCTION(BlueprintCallable) void StopAllDevices();
-	UFUNCTION(BlueprintCallable) void StopDeviceCmd(int32 DeviceIndex);
-
-	UFUNCTION(BlueprintCallable) void SensorReadCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
-	UFUNCTION(BlueprintCallable) void SensorSubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
-	UFUNCTION(BlueprintCallable) void SensorUnsubscribeCmd(int32 DeviceIndex, int32 SensorIndex, FString SensorType);
-	
-	UFUNCTION(BlueprintCallable) void ScalarCmd(int32 DeviceIndex, TArray<FButtplugScalar> Scalars);
-	UFUNCTION(BlueprintCallable) void VibrateCmd(int32 DeviceIndex, TArray<FButtplugSpeed> Speeds);
-	UFUNCTION(BlueprintCallable) void LinearCmd(int32 DeviceIndex, TArray<FButtplugVector> Vectors);
-	UFUNCTION(BlueprintCallable) void RotateCmd(int32 DeviceIndex, TArray<FButtplugRotation> Rotations);
-
-	UFUNCTION(BlueprintCallable) void BasicVibrate(int32 DeviceIndex, float Speed);
-
-	UFUNCTION(BlueprintImplementableEvent) void OnConnected();
-	UFUNCTION(BlueprintImplementableEvent) void OnDisconnected(int32 StatusCode, const FString& Reason, bool WasClean);
-	UFUNCTION(BlueprintImplementableEvent) void OnError(const FString& Message);
-	UFUNCTION(BlueprintImplementableEvent) void OnWebSocketError(const FString& Message);
-	
-	UFUNCTION(BlueprintImplementableEvent) void OnDeviceAdded(FButtplugDevice Device);
-	UFUNCTION(BlueprintImplementableEvent) void OnDeviceRemoved(int32 DeviceIndex);
-	UFUNCTION(BlueprintImplementableEvent) void OnDevicesChanged();
-	UFUNCTION(BlueprintImplementableEvent) void OnScanningFinished();
-
-	UFUNCTION(BlueprintImplementableEvent) void OnSensorReading(USensorReadingMessage* SensorReadingMessage);
-
-	UFUNCTION(BlueprintImplementableEvent) void OnButtplugError(UErrorMessage* ErrorMessage);
+	UFUNCTION(BlueprintCallable) void VibrateForSeconds(int32 DeviceIndex, float TimeInSeconds, float Speed);
+	UFUNCTION(BlueprintCallable) void TestDevice(int32 DeviceIndex);
 };
